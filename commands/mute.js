@@ -85,7 +85,7 @@ module.exports.commands.unmute={ on:true, aliase:'размуть', run:async(cli
               message.channel.send('Сейчас размучу, мля');
               let mmb = message.mentions.members.first();
               if(!mmb){message.channel.send('Кого размутить, мля?'); return;};
-              let resolve = await module.exports.unmute(client,message,mmb,0);
+              let resolve = await module.exports.unmute(client,message,mmb.user.id,0);
               if(resolve=='apsend') return message.channel.send(mmb+' он не был замучен, мля');;
               message.channel.send(mmb+' Размучен, мля');
            
@@ -137,7 +137,7 @@ module.exports.commands.timemute={ on:true, aliase:'помолчика', run:asy
                         console.log('les then limite run timer');
                         await module.exports.delay(times);
                        // return module.exports.commands.unmute.run(client,message,mmb,0);
-                      return module.exports.unmute(client,message,mmb,0);
+                      return module.exports.unmute(client,message,mmb.user.id,0);
               };//if less end
               if(Number(times)>limit){
                         console.log('more then limite break');
@@ -210,9 +210,11 @@ module.exports.boots.someBoot={ on:true,  run:async(client)=>{try{
 
 }catch(err){console.log(err);};};//insertMmbRoles end
 //_____________sf1
-exports.unmute=async(client,message,mmb,time)=>{try{
+exports.unmute=async(client,message,mmbID,time)=>{try{
           console.log('unmute after '+time);
           await module.exports.delay(time+(1000*10));
+          let mmb = await client.guilds.get(client.SERVER_ID).members.get(mmbID);
+          if(!mmb) {console.log('no mmb'); return;};
           await module.exports.roleMute(client,mmb,'remove');
           console.log('unmuting member '+mmb.user.username);
           //let sqlite = require('../modules/aa-sqlite');
@@ -267,11 +269,12 @@ exports.checkBD=async(client)=>{try{
               console.log('current time '+current_time+' table time '+i_time+' tag '+tag); 
               
               //console.log( 'time ' +table[i].time );
-              let mmb = await client.guilds.get(client.SERVER_ID).members.get(table[i].user_id);
+              
               
              
-              if(tag<=module.exports.e.min_tag_time){ tag=(tag>=0)?tag:0; 
-                     module.exports.unmute(client,{},mmb,tag);
+              if(tag<=module.exports.e.min_tag_time ){ tag=(tag>=0)?tag:0; 
+                    //let mmb = await client.guilds.get(client.SERVER_ID).members.get(table[i].user_id);                                
+                     module.exports.unmute(client,{},table[i].user_id,tag);
                      console.log('READY TO UNMUTE');
               };
                  
