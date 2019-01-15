@@ -236,6 +236,7 @@ exports.unmute=async(client,message,mmb,time)=>{try{
               await module.exports.delay(3*1000);   
               if(role.name!='@everyone') await mmb.addRole(role);
            };//for end
+          
            console.log('all roles recovered to mmb');
            resolve = await sqlite.run(`DELETE FROM ${table_name} WHERE user_id=='${mmb_id}'`).then(r=>{console.log('record deleted');}).catch(err=>console.log(err));
            let table = await sqlite.all(`SELECT * FROM ${table_name} `).then(raw=>{return raw;}).catch(err=>console.log(err));
