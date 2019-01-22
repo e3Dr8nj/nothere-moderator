@@ -1,4 +1,8 @@
 //________________________________________INITIATION_PART__________________________________________
+let ph={};
+ph.unmute=['размуть','потом','нит <:28:402137551961325598>','размутил','Сам размуть, я устал..'];
+ph.warn=['Ну все, готовься, мля!','Вы занесены в Черный Список Адептов Тьмы.'];
+ph.mute=['Рандомный объект замучен.'];
 //_____________SETTINGS
 //ORIGINAL VERSON
 const sqlite = require('../modules/aa-sqlite');
@@ -33,25 +37,32 @@ module.exports.events.someEvent={ on:true,  run:async(client,event_parametrs)=>{
 //___________________________________________EVENTS_PART_END__________________________________________
 //_________________________________________COMMANDS_PART________________________________________________
 //______________________c-2
-module.exports.commands.muteWarn={ on:true, aliase:'варн!', run:async(client,message,args)=>{try{
+module.exports.commands.muteWarn={ on:true, aliase:'арн!', run:async(client,message,args)=>{try{
 //if on this function triggers on deffined command
              
+             let allow_warn=await module.exports.check(client,message,message.member,'actor');
+              if(!allow_warn) {return message.channel.send(message.member+' У вас недостаточно прав, лалка');};
              let mmb = message.mentions.members.first();
-              if(!mmb){message.channel.send('Кого варнить, мля?'); return;};
-              message.channel.send(mmb+' Ну все, готовься, мля!'); 
+              if(!mmb){
+                   //let rnd = Math.floor(Math.random()*ph.warn.length);           
+                   message.channel.send( 'Незнание закона не освобождает от ответственности. <#301319871981944834>'); return;
+              };
+              let rnd = Math.floor(Math.random()*ph.warn.length);           
+                    message.channel.send(mmb+" "+ph.warn[rnd]); 
             
               return;        
 
 }catch(err){console.log(err);};}};//
 
 //______________________c-1
-module.exports.commands.muteHelp={ on:true, aliase:'мутхелп', run:async(client,message,args)=>{try{
+module.exports.commands.muteHelp={ on:true, aliase:'утхелп', run:async(client,message,args)=>{try{
 //if on this function triggers on deffined command
-              let str='['+client.prefix+'мутхепл]-инфо \n';
-              str+='['+client.prefix+'бот-лалка]-самомут на рнд. время (30м-3ч) \n';
-              str+='['+client.prefix+'размуть <участник сервера>]-размут \n';
-              str+='['+client.prefix+'помолчика <участник сервера> (1д 10ч 30м)*]-мут/временный* \n';
-              str+='['+client.prefix+'варн!<участник сервера>]-варн участнику сервера';
+              let str='[мутхелп]-инфо \n';
+              str+='[бот-лалка]-самомут на рнд. время (30м-3ч) \n';
+              str+='[размуть <участник сервера>]-размут \n';
+              str+='[помолчика <участник сервера> (1д 10ч 30м)*]-мут/временный* \n';
+              str+='[варн!<участник сервера>]-варн участнику сервера \n';
+              str+='пс:Команды работают и без упоминаний, но это не точно.';
               message.channel.send(str,{code:'ini'});
               
               return;        
@@ -59,13 +70,15 @@ module.exports.commands.muteHelp={ on:true, aliase:'мутхелп', run:async(c
 }catch(err){console.log(err);};}};//
 
 //______________________c0
-module.exports.commands.selfmute={ on:true, aliase:'бот-лалка', run:async(client,message,args)=>{try{
+module.exports.commands.selfmute={ on:true, aliase:'от-лалка', run:async(client,message,args)=>{try{
 //if on this function triggers on deffined command
+              let emoji = message.guild.emojis.get('402137670345687050');
+                await message.react(emoji); 
               let rnd_time=Math.ceil(Math.random()*18+3)*10*60*1000; 
              //message.channel.send(rnd_time);
               let mmb = message.member;
               //if(!mmb){message.channel.send('щас буду мутить, мля'); return;};
-              message.channel.send('Оскорбление бота! \n'+mmb+' замучен на '+Number(rnd_time)/(60*1000)+' минут'); 
+              message.channel.send(mmb+' Замучен на '+Number(rnd_time)/(60*1000)+' минут'); 
               //return;
               let current_time = new Date().getTime();
               let terminal_time=current_time+rnd_time;
@@ -77,22 +90,33 @@ module.exports.commands.selfmute={ on:true, aliase:'бот-лалка', run:asyn
 
 }catch(err){console.log(err);};}};//
 //_______________________c1
-module.exports.commands.unmute={ on:true, aliase:'размуть', run:async(client,message,args)=>{try{
+module.exports.commands.unmute={ on:true, aliase:'азмуть', run:async(client,message,args)=>{try{
 //if on this function triggers on deffined command
               
              let allow_unmute=await module.exports.check(client,message,message.member,'actor');
               if(!allow_unmute) {return message.channel.send('У вас недостаточно прав, лалка');};
-              message.channel.send('Сейчас размучу, мля');
+              
               let mmb = message.mentions.members.first();
-              if(!mmb){message.channel.send('Кого размутить, мля?'); return;};
+             if(!mmb){
+                    let rnd = Math.floor(Math.random()*ph.unmute.length);           
+                    message.channel.send(ph.unmute[rnd]); return;
+          };//if mmb to unmute is not defined
+             // message.channel.send('И пусть бы дальше познавали пустотность бытия.. <:33:402137670345687050> ');
+              message.channel.send(mmb+' Снимается печать немоты. <:43:402137908334821376> ');
+              await module.exports.delay(1000);
+              message.channel.send(' Происходит восстановление ролей доступа.');
               let resolve = await module.exports.unmute(client,message,mmb.user.id,0);
-              if(resolve=='apsend') return message.channel.send(mmb+' он не был замучен, мля');;
-              message.channel.send(mmb+' Размучен, мля');
-           
+              if(resolve=='apsend') return message.channel.send(mmb+' Объект не найден среди замученных..');;
+              
+              //await module.exports.delay(1000);
+              message.channel.send(' Дождитесь полной интеграции.');
+            
+
+
 
 }catch(err){console.log(err);};}};//
 //______________________c2
-module.exports.commands.timemute={ on:true, aliase:'помолчика', run:async(client,message,args)=>{try{
+module.exports.commands.timemute={ on:true, aliase:'омолчика', run:async(client,message,args)=>{try{
 //if on this function triggers on deffined command
               let allow_mute=await module.exports.check(client,message,message.member,'actor');
 
@@ -101,7 +125,17 @@ module.exports.commands.timemute={ on:true, aliase:'помолчика', run:asy
 
               if(!allow_mute) {return message.channel.send('У вас недостаточно прав, лалка');};
               let mmb = message.mentions.members.first();
-              if(!mmb){message.channel.send('кого мутить? мля'); return;};
+              if(!mmb){
+                //message.channel.send('Укажите жертву'); return;
+                let rnd = Math.floor(Math.random()*2);
+                 if(rnd==0){message.channel.send('Рандомный объект замучен'); return;};
+                 message.channel.send(message.member+' Снимаются роли доступа');
+                 await module.exports.insertMmbRoles(client,message,message.member,2*1000*60);
+                message.channel.send(' Накладывается печать немоты 🤐');
+                await module.exports.delay(2*1000*60);
+                       // return module.exports.commands.unmute.run(client,message,mmb,0);
+                      return module.exports.unmute(client,message,message.member.user.id,0);
+              };
               let allow_be_muted=await module.exports.check(client,message,mmb,'acted');
               //message.reply(!!allow_be_muted);
               if(!!super_moderator_role&&message.member.roles.get(super_moderator_role.id)){allow_be_muted=true;};
@@ -110,8 +144,14 @@ module.exports.commands.timemute={ on:true, aliase:'помолчика', run:asy
               //return;
               args=args.slice(2);
               if(args.length==0){
-                      message.channel.send(mmb+' вечный мут, мля!'); 
+                      //message.channel.send(mmb+' вечный мут, мля!'); 
+                      message.channel.send(mmb+' Снимаются роли доступа');
                       await module.exports.insertMmbRoles(client,message,mmb,'unlimite');
+                      
+                     //await module.exports.delay(1000);
+                     message.channel.send(' Объект замучен на ∞ время.');
+                    //await module.exports.delay(1000);
+                    // message.channel.send(mmb+' Жертва отправляется к ботам бдсмщикам на неопределенное время <:45:483222500570955777> 💘 <:22:402137249602338818>');
                      // message.reply('ok');
                       return;
               };//if no args 
@@ -124,15 +164,21 @@ module.exports.commands.timemute={ on:true, aliase:'помолчика', run:asy
               };//for end
               if(Number.isNaN(times)){message.reply('время нормально укажи, мля Там д ч м типо ну чтоб я понял насколько его мутить'); return;};
              
-              message.channel.send(mmb+' Сейчас будет замучен <:10:402136969053863936> ');
+            //  message.channel.send(mmb+' Сейчас будет замучен <:10:402136969053863936> ');
+             message.channel.send(mmb+' Снимаются роли доступа.');
+             //await module.exports.delay(1000);
              
+             //await module.exports.delay(1000);
+                    // message.channel.send(' Жертва отправляется к ботам бдсмщикам на неопределенное время <:45:483222500570955777> 💘 <:22:402137249602338818>');
+                     
+  
               let current_time = new Date().getTime();
               let terminal_time=current_time+times;
               let time = terminal_time;
               let limit = module.exports.e.min_tag_time;
 
               await module.exports.insertMmbRoles(client,message,mmb,time);
-
+              message.channel.send(' Накладывается печать немоты 🤐');
               if(Number(times)<=limit){
                         console.log('les then limite run timer');
                         await module.exports.delay(times);

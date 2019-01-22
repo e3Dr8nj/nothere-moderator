@@ -25,7 +25,7 @@ exports.e={
 module.exports.events.message={ on:true,  run:async(client,message)=>{try{
 //if on this function triggers on deffined event
              
-              if(message.author==client.user) return;
+              //if(message.author==client.user) return;
               if(!message.channel.name.startsWith(module.exports.e.chnl_name)) return;
               if(message.content.startsWith('!bump')){
                     let emoji = message.guild.emojis.get('402137551961325598');
@@ -64,9 +64,10 @@ module.exports.events.message={ on:true,  run:async(client,message)=>{try{
 
 //___________________________________________EVENTS_PART_END__________________________________________
 //_________________________________________COMMANDS_PART_________________________________________________
-module.exports.commands.someCommand={ on:true, aliase:'aliase for that command', run:async(client,message,args)=>{try{
+module.exports.commands.someCommand={ on:true, aliase:'bumped', run:async(client,message,args)=>{try{
 //if on this function triggers on deffined command
-              
+             let emb={description:':white_check_mark: Server bumped!'};
+              message.channel.send({embed:emb});
 
 }catch(err){console.log(err);};}};//
 
