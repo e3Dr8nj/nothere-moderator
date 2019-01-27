@@ -24,7 +24,7 @@ module.exports.events.someEvent={ on:true,  run:async(client,event_parametrs)=>{
 //___________________________________________EVENTS_PART_END__________________________________________
 //_________________________________________COMMANDS_PART_________________________________________________
 //__________c-1
-module.exports.commands.roleHelp={ on:true, aliase:'рольхелп', run:async(client,message,args)=>{try{
+module.exports.commands.roleHelp={ on:true, aliase:'рольхелп2', run:async(client,message,args)=>{try{
 //if on this function triggers on deffined command
               let px=client.prefix;
               let str='';
