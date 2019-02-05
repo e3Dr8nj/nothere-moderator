@@ -1,11 +1,12 @@
 //________________________________________INITIATION_PART__________________________________________
 let ph={};
 ph.unmute=['размуть','потом','нит <:28:402137551961325598>','размутил','Сам размуть, я устал..'];
-ph.warn=['Ну все, готовься, мля!','Вы занесены в Черный Список Адептов Тьмы.'];
+ph.warn=['Еще одно нарушение и вас могут замутить.<:34:402137690318962688> '];
 ph.mute=['Рандомный объект замучен.'];
 //_____________SETTINGS
 //ORIGINAL VERSON
 const sqlite = require('../modules/aa-sqlite');
+//const sqlite = require('aa-sqlite');
 exports.active=true;//this module activate (deactivate module and all events,commands,boot in it if value is false)
 
 exports.events={};// {} - activate/false - deactive
@@ -19,12 +20,13 @@ exports.d={
 };//d end
 //___________ENVORIMENTAL//envorimental set, elements accesed by module.exports.e.some_envorimental
 exports.e={
-     bd_name:'BD_muted2.bd'
+     ch_log_name:'лог-мод'
+    ,bd_name:'BD_muted2.bd'
     ,table_name:'table_10' 
     ,min_tag_time: 10*1000*60
     ,mute_role_name:'Muted'
     ,moderator_name:'Модератор'
-    ,super_moderator_name:'Мутительница'
+    ,super_moderator_name:'Супермодератор'
 };//e end
 //_________________________________________INITIATION_PART_END___________________________________________
 //_________________________________________EVENTS_PART_________________________________________________
@@ -48,8 +50,8 @@ module.exports.commands.muteWarn={ on:true, aliase:'арн!', run:async(client,m
                    message.channel.send( 'Незнание закона не освобождает от ответственности. <#301319871981944834>'); return;
               };
               let rnd = Math.floor(Math.random()*ph.warn.length);           
-                    message.channel.send(mmb+" "+ph.warn[rnd]); 
-            
+                    message.channel.send(mmb+" "+ph.warn[rnd]);
+                    await module.exports.log(client,message,{name:'Предупреждение',description:' предупредил '+mmb+' '+mmb.username+mmb.discriminator+' ',color:'red2'});
               return;        
 
 }catch(err){console.log(err);};}};//
@@ -60,8 +62,8 @@ module.exports.commands.muteHelp={ on:true, aliase:'утхелп', run:async(cli
               let str='[мутхелп]-инфо \n';
               str+='[бот-лалка]-самомут на рнд. время (30м-3ч) \n';
               str+='[размуть <участник сервера>]-размут \n';
-              str+='[помолчика <участник сервера> (1д 10ч 30м)*]-мут/временный* \n';
-              str+='[варн!<участник сервера>]-варн участнику сервера \n';
+              str+='[помолчика <участник сервера> (1д 10ч 30м)* ---<причина>]-мут/временный* \n';
+              str+='[варн!<участник сервера> ---<причина>]-варн участнику сервера \n';
               str+='пс:Команды работают и без упоминаний, но это не точно.';
               message.channel.send(str,{code:'ini'});
               
@@ -73,7 +75,7 @@ module.exports.commands.muteHelp={ on:true, aliase:'утхелп', run:async(cli
 module.exports.commands.selfmute={ on:true, aliase:'от-лалка', run:async(client,message,args)=>{try{
 //if on this function triggers on deffined command
               let emoji = message.guild.emojis.get('402137670345687050');
-                await message.react(emoji); 
+              if(!!emoji)  await message.react(emoji); 
               let rnd_time=Math.ceil(Math.random()*18+3)*10*60*1000; 
              //message.channel.send(rnd_time);
               let mmb = message.member;
@@ -84,8 +86,8 @@ module.exports.commands.selfmute={ on:true, aliase:'от-лалка', run:async(
               let terminal_time=current_time+rnd_time;
               let time = terminal_time;
               await module.exports.insertMmbRoles(client,message,mmb,time);
-             // message.channel.send(mmb+' Подумай над своим поведением');
-              
+           
+              await module.exports.log(client,message,{name:'Оскорбление бота',description:mmb+' '+mmb.user.username+mmb.user.discriminator +' оскорбил бота и был за это замучен на '+Number(rnd_time)/(60*1000)+' минут',color:'violet'});
               return;        
 
 }catch(err){console.log(err);};}};//
@@ -110,7 +112,9 @@ module.exports.commands.unmute={ on:true, aliase:'азмуть', run:async(clien
               
               //await module.exports.delay(1000);
               message.channel.send(' Дождитесь полной интеграции.');
-            
+              
+              await module.exports.log(client,message,{name:'Размут',description:' размутил '+mmb+' '+mmb.user.username+mmb.user.discriminator,color:'green'});
+              return;  
 
 
 
@@ -136,13 +140,19 @@ module.exports.commands.timemute={ on:true, aliase:'омолчика', run:async
                        // return module.exports.commands.unmute.run(client,message,mmb,0);
                       return module.exports.unmute(client,message,message.member.user.id,0);
               };
-              let allow_be_muted=await module.exports.check(client,message,mmb,'acted');
+              let allow_be_muted=await module.exports.check(client,message,mmb,'acted');//--
+             
               //message.reply(!!allow_be_muted);
               if(!!super_moderator_role&&message.member.roles.get(super_moderator_role.id)){allow_be_muted=true;};
-              if(!!super_moderator_role&&mmb.roles.get(super_moderator_role.id)){allow_be_muted=false;};
+              
+              if(message.guild.owner.id==message.member.user.id){allow_be_muted=true;};
+              //if(!!super_moderator_role&&mmb.roles.get(super_moderator_role.id)){allow_be_muted=false;};
               if(!allow_be_muted) {return message.channel.send('У вас недостаточно прав, лалка');};
               //return;
-              args=args.slice(2);
+              let base_part=message.content.split('>')[1];
+              if(base_part.indexOf('--')!=-1) base_part=base_part.split('--')[0];
+              args=base_part.trim().split(' ');
+              //args=args.slice(2);
               if(args.length==0){
                       //message.channel.send(mmb+' вечный мут, мля!'); 
                       message.channel.send(mmb+' Снимаются роли доступа');
@@ -150,26 +160,19 @@ module.exports.commands.timemute={ on:true, aliase:'омолчика', run:async
                       
                      //await module.exports.delay(1000);
                      message.channel.send(' Объект замучен на ∞ время.');
-                    //await module.exports.delay(1000);
-                    // message.channel.send(mmb+' Жертва отправляется к ботам бдсмщикам на неопределенное время <:45:483222500570955777> 💘 <:22:402137249602338818>');
-                     // message.reply('ok');
+                    
                       return;
               };//if no args 
-              let times = 0; let n = 0;
+              let times = 0; let n = 0; let time_str='';
               for(let i=0;i<args.length;i++){
                      n=0;
                     if(args[i].endsWith('м')){  n = parseInt(args[i]); n=n*1000*60; times+=n; console.log(n+' '+'minutes');  };
                     if(args[i].endsWith('ч')){  n = parseInt(args[i]); n=n*1000*60*60; times+=n; console.log(n+' '+'hourses');  };
-                    if(args[i].endsWith('д')){  n = parseInt(args[i]); n=n*1000*60*60*24; times+=n; console.log(n+' '+'days');  };
+                    if(args[i].endsWith('д')){  n = parseInt(args[i]); n=n*1000*60*60*24; times+=n; console.log(n+' '+'days'); };
               };//for end
-              if(Number.isNaN(times)){message.reply('время нормально укажи, мля Там д ч м типо ну чтоб я понял насколько его мутить'); return;};
+              if(Number.isNaN(times)){message.reply('Не верно указанное время, или не добавлено -- два дефиса после ника нарушителя.'); return;};
              
-            //  message.channel.send(mmb+' Сейчас будет замучен <:10:402136969053863936> ');
              message.channel.send(mmb+' Снимаются роли доступа.');
-             //await module.exports.delay(1000);
-             
-             //await module.exports.delay(1000);
-                    // message.channel.send(' Жертва отправляется к ботам бдсмщикам на неопределенное время <:45:483222500570955777> 💘 <:22:402137249602338818>');
                      
   
               let current_time = new Date().getTime();
@@ -179,6 +182,8 @@ module.exports.commands.timemute={ on:true, aliase:'омолчика', run:async
 
               await module.exports.insertMmbRoles(client,message,mmb,time);
               message.channel.send(' Накладывается печать немоты 🤐');
+              base_part=(base_part!=' ')?base_part:'неопределенное время';
+              await module.exports.log(client,message,{name:'Мут',description:' замутил на '+base_part+' '+mmb+' '+mmb.user.username+mmb.user.discriminator,color:'red'});
               if(Number(times)<=limit){
                         console.log('les then limite run timer');
                         await module.exports.delay(times);
@@ -369,3 +374,17 @@ exports.check=async(client,message,mmb,person)=>{try{
          return ;
 
 }catch(err){console.log(err);};};//exports roleMute end
+//_________SF
+exports.log=async(client,message,action,role_name,mmb)=>{
+try{ 
+   let colors={blue:0x3366ff,gray:0x668099,red:0xff0000,red2:0xcc0066,green:0x339980,violet:0x6600cc,dark_blue:0x000066};
+   action.color=(action.color&&colors[action.color])?action.color:'dark_blue';
+   let cose='';
+   if(message.content.indexOf('--')!=-1) {cose = '\n причина: '+message.content.split('--')[1];}; 
+   let log_mod=await message.guild.channels.find(r=>r.name==module.exports.e.ch_log_name);
+   if(!log_mod){console.log('log channel not found'); return;};
+  // log_mod.send(message.member+action+"`"+role_name+"`  "+mmb);
+   let emb={fields:[{name:action.name,value:message.member+action.description+cose}],timestamp: new Date(),color:colors[action.color]};
+   log_mod.send({embed:emb});
+}catch(err){console.log(err);};
+};//log end

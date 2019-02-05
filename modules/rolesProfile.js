@@ -20,7 +20,7 @@ exports.e={
 exports.system={
  
      //channel_name:'🔎info-help',
-      channel_name:'✺⚛роли-и-маски⚛✺',
+      channel_name:'⚛роли-и-каналы✺',
     // prefix:'.',
      step:10,
      divider_roleList_word:'roles1',
