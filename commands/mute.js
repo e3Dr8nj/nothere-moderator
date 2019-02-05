@@ -29,6 +29,7 @@ exports.e={
     ,super_moderator_name:'Супермодератор'
 };//e end
 //_________________________________________INITIATION_PART_END___________________________________________
+let limiter=10*24*60*60*1000;
 //_________________________________________EVENTS_PART_________________________________________________
 module.exports.events.someEvent={ on:true,  run:async(client,event_parametrs)=>{try{
 //if on this function triggers on deffined event
@@ -156,7 +157,7 @@ module.exports.commands.timemute={ on:true, aliase:'омолчика', run:async
               if(args.length==0){
                       //message.channel.send(mmb+' вечный мут, мля!'); 
                       message.channel.send(mmb+' Снимаются роли доступа');
-                      await module.exports.insertMmbRoles(client,message,mmb,'unlimite');
+                      await module.exports.insertMmbRoles(client,message,mmb,limiter);
                       
                      //await module.exports.delay(1000);
                      message.channel.send(' Объект замучен на ∞ время.');
@@ -173,7 +174,8 @@ module.exports.commands.timemute={ on:true, aliase:'омолчика', run:async
               if(Number.isNaN(times)){message.reply('Не верно указанное время, или не добавлено -- два дефиса после ника нарушителя.'); return;};
              
              message.channel.send(mmb+' Снимаются роли доступа.');
-                     
+             let more=false;
+             if(Number(times)>limiter) {times=limiter;more=true;}; 
   
               let current_time = new Date().getTime();
               let terminal_time=current_time+times;
@@ -183,7 +185,8 @@ module.exports.commands.timemute={ on:true, aliase:'омолчика', run:async
               await module.exports.insertMmbRoles(client,message,mmb,time);
               message.channel.send(' Накладывается печать немоты 🤐');
               base_part=(base_part!=' ')?base_part:'неопределенное время';
-              await module.exports.log(client,message,{name:'Мут',description:' замутил на '+base_part+' '+mmb+' '+mmb.user.username+mmb.user.discriminator,color:'red'});
+              let a_time=(more)?'||10д||':'';
+              await module.exports.log(client,message,{name:'Мут',description:' замутил на '+base_part+a_time+' '+mmb+' '+mmb.user.username+mmb.user.discriminator,color:'red'});
               if(Number(times)<=limit){
                         console.log('les then limite run timer');
                         await module.exports.delay(times);

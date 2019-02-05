@@ -209,7 +209,7 @@ try{
 //_______SF3
 exports.isAble=async(client,message)=>{
 try{ 
-   return true;
+   //return true;
    if(message.member.user.id==message.guild.owner.id) return true;
    let role_=await message.guild.roles.find(r=>r.name==module.exports.e.sm_role_name);
    if(!role_){message.channel.send('роль не найдена '+module.exports.e.sm_role_name); return false;};
