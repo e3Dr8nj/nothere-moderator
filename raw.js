@@ -51,6 +51,7 @@ exports.onMessage=async(client,event_d)=>{try{
    let message = await client.channels.get(event_d.channel_id).fetchMessage(event_d.id).then(collected=>{return collected;});
      //  message.channel.send(message.content);//-----
       if(!message) return;
+      if(!message.content.startsWith(client.prefix)) return;
       let args = message.content.slice(client.prefix.length).trim().split(/ +/g);
       let cmd_name = args[0];
 

@@ -40,7 +40,7 @@ module.exports.events.someEvent={ on:true,  run:async(client,event_parametrs)=>{
 //___________________________________________EVENTS_PART_END__________________________________________
 //_________________________________________COMMANDS_PART________________________________________________
 //______________________c-2
-module.exports.commands.muteWarn={ on:true, aliase:'арн!', run:async(client,message,args)=>{try{
+module.exports.commands.muteWarn={ on:true, aliase:'варн!', run:async(client,message,args)=>{try{
 //if on this function triggers on deffined command
              
              let allow_warn=await module.exports.check(client,message,message.member,'actor');
@@ -58,14 +58,15 @@ module.exports.commands.muteWarn={ on:true, aliase:'арн!', run:async(client,m
 }catch(err){console.log(err);};}};//
 
 //______________________c-1
-module.exports.commands.muteHelp={ on:true, aliase:'утхелп', run:async(client,message,args)=>{try{
+module.exports.commands.muteHelp={ on:true, aliase:'мутхелп', run:async(client,message,args)=>{try{
 //if on this function triggers on deffined command
-              let str='[мутхелп]-инфо \n';
-              str+='[бот-лалка]-самомут на рнд. время (30м-3ч) \n';
-              str+='[размуть <участник сервера>]-размут \n';
-              str+='[помолчика <участник сервера> (1д 10ч 30м)* ---<причина>]-мут/временный* \n';
-              str+='[варн!<участник сервера> ---<причина>]-варн участнику сервера \n';
-              str+='пс:Команды работают и без упоминаний, но это не точно.';
+              let prefix='\\';
+              let str=prefix+'[мутхелп]-инфо \n';
+              str+=prefix+'[бот-лалка]-самомут на рнд. время (30м-3ч) \n';
+              str+=prefix+'[размуть <участник сервера>]-размут \n';
+              str+=prefix+'[помолчика <участник сервера> (1д 10ч 30м)* ---<причина>]-мут/временный* \n';
+              str+=prefix+'[варн!<участник сервера> ---<причина>]-варн участнику сервера \n';
+              str+=prefix+'пс:Команды работают и без упоминаний, но это не точно.';
               message.channel.send(str,{code:'ini'});
               
               return;        
@@ -73,7 +74,7 @@ module.exports.commands.muteHelp={ on:true, aliase:'утхелп', run:async(cli
 }catch(err){console.log(err);};}};//
 
 //______________________c0
-module.exports.commands.selfmute={ on:true, aliase:'от-лалка', run:async(client,message,args)=>{try{
+module.exports.commands.selfmute={ on:true, aliase:'бот-лалка', run:async(client,message,args)=>{try{
 //if on this function triggers on deffined command
               let emoji = message.guild.emojis.get('402137670345687050');
               if(!!emoji)  await message.react(emoji); 
@@ -88,12 +89,12 @@ module.exports.commands.selfmute={ on:true, aliase:'от-лалка', run:async(
               let time = terminal_time;
               await module.exports.insertMmbRoles(client,message,mmb,time);
            
-              await module.exports.log(client,message,{name:'Оскорбление бота',description:mmb+' '+mmb.user.username+mmb.user.discriminator +' оскорбил бота и был за это замучен на '+Number(rnd_time)/(60*1000)+' минут',color:'violet'});
+              await module.exports.log(client,message,{name:'Оскорбление бота',description:mmb.user.username+mmb.user.discriminator +' оскорбил бота и был за это замучен на '+Number(rnd_time)/(60*1000)+' минут',color:'violet'});
               return;        
 
 }catch(err){console.log(err);};}};//
 //_______________________c1
-module.exports.commands.unmute={ on:true, aliase:'азмуть', run:async(client,message,args)=>{try{
+module.exports.commands.unmute={ on:true, aliase:'размуть', run:async(client,message,args)=>{try{
 //if on this function triggers on deffined command
               
              let allow_unmute=await module.exports.check(client,message,message.member,'actor');
@@ -121,7 +122,7 @@ module.exports.commands.unmute={ on:true, aliase:'азмуть', run:async(clien
 
 }catch(err){console.log(err);};}};//
 //______________________c2
-module.exports.commands.timemute={ on:true, aliase:'омолчика', run:async(client,message,args)=>{try{
+module.exports.commands.timemute={ on:true, aliase:'помолчика', run:async(client,message,args)=>{try{
 //if on this function triggers on deffined command
               let allow_mute=await module.exports.check(client,message,message.member,'actor');
 
