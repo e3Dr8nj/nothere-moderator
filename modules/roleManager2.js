@@ -16,10 +16,20 @@ const aliase ={
   ,'кто все эти люди':{name:'кто все эти люди',add:true,remove:true}
   ,'модератор':{name:'модератор',add:false,remove:true}
   ,'сумеречные':{name:'сумеречные',add:false,remove:true}
-
-  
 };
 
+const self_roles ={
+  'dj':{name:'dj',add:true,remove:true}
+  ,'пинг':{name:'💥',add:true,remove:true}
+ ,'токсик':{name:'☠',add:true,remove:true}
+ ,'craig':{name:'craig', add:true,remove:true}
+  ,'викторина':{name:'v', add:true,remove:true}
+ // ,'лампочка':{name:'💡',add:true, remove:true}
+ // ,'звездочка':{name:'✴',add:true, remove:true}
+ // ,'кто все эти люди':{name:'кто все эти люди',add:true,remove:true}
+ // ,'модератор':{name:'модератор',add:false,remove:true}
+ // ,'сумеречные':{name:'сумеречные',add:false,remove:true}
+};
 exports.d={
       some_phase:['on_lang0','on_lang1']
 };//d end
@@ -40,90 +50,36 @@ module.exports.events.someEvent={ on:true,  run:async(client,event_parametrs)=>{
 
 //___________________________________________EVENTS_PART_END__________________________________________
 //_________________________________________COMMANDS_PART_________________________________________________
-//__________c-1
+//__________c0
 module.exports.commands.roleHelp={ on:true, aliase:'рольхелп', run:async(client,message,args)=>{try{
 //if on this function triggers on deffined command
               let isAble=await module.exports.isAble(client,message);
-              if(!isAble) return false;
-              let px=client.prefix;
-              let str='';//роль @nick1 +роль, -роль2, -роль3
-              str+='['+px+'роль @nick1 +роль1,-роль2,-роль3]\n';
-              str+='['+px+'роль @nick1 @nick2 +роль1,+роль2,-роль3]\n*+выдать роль -снять роль \n';
-             // str+='['+px+'поменять <@nick> <роль1>,<роль2>]- поменять роли \n';
-           
-              str+='  +/-Адепты Хаоса\n  +/-Кто все эти люди\n  +/-Странники\n  -Временная роль\n  +/-Лампочка\n  +/-Звездочка\n';
-              str+='  -Модератор\n  -Сумеречные\n';
-            //  str+='['+px+'рольПозиция <название роли>]-\n';
-            // str+='['+px+'рольПоменятьПозицию <название роли>,<позиция>]-поменять позицию роли\n';
-            // str+='['+px+'рольДать <упоминания участников>,<название ролей через запятую>]-выдать роли участникам\n';
-            //  str+='['+px+'рольУдалить <название роли>]-удалить роль\n';
-             message.channel.send(str,{code:'ini'});
+              let str =''; let px=client.prefix;
+              str+='['+px+'роль +роль1] взять роль1\n';
+              str+='['+px+'роль -роль1] снять роль1\n';
+              str+='['+px+'роль +роль1,-роль2]\n*взять роль1 снять роль2\n';
+              str+='  +/-DJ\n  +/-craig\n  +/-токсик\n +/-пинг\n +/-викторина\n';
+              if(isAble){
+                  str+='['+px+'роль @nick1 +роль1,-роль2,-роль3]\n';
+                  str+='['+px+'роль @nick1 @nick2 +роль1,+роль2,-роль3]\n*+выдать роль -снять роль \n';
+                  str+='  +/-Адепты Хаоса\n  +/-Кто все эти люди\n  +/-Странники\n  -Временная роль\n  +/-Лампочка\n  +/-Звездочка\n';
+                  str+='  -Модератор\n  -Сумеречные\n';
+              };//isAble true;
+              message.channel.send(str,{code:'ini'});
 }catch(err){console.log(err);};}};//
-//_______c0
-/*
-module.exports.commands.giveRole={ on:false, aliase:'выдать', run:async(client,message,args)=>{try{
-//if on this function triggers on deffined command
-           let isAble=await module.exports.isAble(client,message);
-           if(!isAble) return false;
-           if(!message.mentions.members.first()){message.channel.send('кому роль выдать?мля'); return;};
-            let mmbs = message.mentions.members.keyArray();
-            let msg_cnt =message.content.split('>');
-            let role_names = msg_cnt[msg_cnt.length-1].trim().split(',');
-            console.log(role_names);
-            for(let i=0;i<role_names.length;i++){ console.log(role_names[i]);
-             
-                    for(let ii=0;ii<mmbs.length;ii++){
-                        try{
-                            let mmb= await message.member.guild.fetchMember(mmbs[ii]).catch(err=>console.log(err));
-                            console.log(mmb.user.username);
-                            let r_n = (role_names[i].startsWith(' '))?role_names[i].slice(1):role_names[i];
-                            await module.exports.giveRole(client,message,mmb,r_n);
-                         }catch(err){console.log(err);};
-                    };//for ii end
-             
-            };//for end
-           // message.channel.send('ок');
-            return;
-}catch(err){console.log(err);};}};//
-*/
-//_______c2
-/*
-module.exports.commands.removeRole={ on:false, aliase:'снять', run:async(client,message,args)=>{try{
-//if on this function triggers on deffined command
-           let isAble=await module.exports.isAble(client,message);
-           if(!isAble) return false;
-           if(!message.mentions.members.first()){
-             message.channel.send('у кого роли снимать?мля'); 
-            return;};
-            let mmbs = message.mentions.members.keyArray();
-            let msg_cnt =message.content.split('>');
-            let role_names = msg_cnt[msg_cnt.length-1].trim().split(',');
-            console.log(role_names);
-            for(let i=0;i<role_names.length;i++){ console.log(role_names[i]);
-             
-                    for(let ii=0;ii<mmbs.length;ii++){
-                        try{
-                            let mmb= await message.member.guild.fetchMember(mmbs[ii]).catch(err=>console.log(err));
-                            console.log(mmb.user.username);
-                            let r_n = (role_names[i].startsWith(' '))?role_names[i].slice(1):role_names[i];
-                            await module.exports.removeRole(client,message,mmb,r_n);
-                         }catch(err){console.log(err);};
-                    };//for ii end
-             
-            };//for end
-            //message.channel.send('роли сняты или добавлены (но это не точно)');
-           
-            return;
-}catch(err){console.log(err);};}};//
-*/
-//_______c3
+//_______c1
 module.exports.commands.manipuleRole={ on:true, aliase:'роль', run:async(client,message,args)=>{try{
 //if on this function triggers on deffined command
-           let isAble=await module.exports.isAble(client,message);
-           if(!isAble) return false;
+           total_log='';
            if(!message.mentions.members.first()){
-             //message.channel.send('лалка');
-             return;};
+             
+             return module.exports.selfRoles(client,message);
+           };//selfroles mode
+           let isAble=await module.exports.isAble(client,message);
+           if(!isAble) {
+             message.channel.send(message.member+' недостаточно прав');
+             return false;}
+           
             let mmbs = message.mentions.members.keyArray();
             let msg_cnt =message.content.split('>');
             let role_names = msg_cnt[msg_cnt.length-1].trim().split(',');
@@ -138,15 +94,15 @@ module.exports.commands.manipuleRole={ on:true, aliase:'роль', run:async(cli
                             if(r_n.startsWith('-')){
                                 r_n=r_n.slice(1); 
                                 r_n = (r_n.startsWith(' '))?r_n.slice(1):r_n;
-                                await module.exports.removeRole(client,message,mmb,r_n); 
+                                await module.exports.removeRole(client,message,mmb,r_n,aliase); 
                             }else if(r_n.startsWith('+')){
                                 r_n=r_n.slice(1); 
                                 r_n = (r_n.startsWith(' '))?r_n.slice(1):r_n;
-                                await module.exports.giveRole(client,message,mmb,r_n); 
+                                await module.exports.giveRole(client,message,mmb,r_n,aliase); 
                             }else{
                                 r_n=r_n.slice(1);
                                 r_n = (r_n.startsWith(' '))?r_n.slice(1):r_n;
-                                await module.exports.giveRole(client,message,mmb,r_n); 
+                                await module.exports.giveRole(client,message,mmb,r_n,aliase); 
                             };
                          }catch(err){console.log(err);};
                     };//for ii end
@@ -173,16 +129,16 @@ module.exports.boots.someBoot={ on:true,  run:async(client)=>{try{
 //_______SF0
 
 //_______SF1
-exports.giveRole=async(client,message,mmb,role_name)=>{
+exports.giveRole=async(client,message,mmb,role_name,aliase)=>{
 try{ 
    role_name=role_name.toLowerCase();
    if(!aliase[role_name]||aliase[role_name].add===false) {
         message.channel.send(role_name+' - роль неверно указана, или недоступна для данной манипуляции. \\'+client.prefix+'рольхелп');
         return;
    };
-   role_name=aliase[role_name].name;
+   role_name=aliase[role_name].name.toLowerCase();
    let role_=await message.guild.roles.find(r=>r.name.toLowerCase()==role_name);
-   if(!role_){message.channel.send(role_name+' роль не найдена '+role_name); return;};
+   if(!role_){message.channel.send(role_name+' роль не найдена '); return;};
    if(mmb.roles.get(role_.id)) {return;};
    await mmb.addRole(role_); 
    message.channel.send(role_.name+' роль добавлена '+mmb.user.username);
@@ -192,11 +148,11 @@ try{
 }catch(err){console.log(err);};
 };//createRole end
 //_______SF2
-exports.removeRole=async(client,message,mmb,role_name)=>{
+exports.removeRole=async(client,message,mmb,role_name,aliase)=>{
 try{ 
    role_name=role_name.toLowerCase();
    if(!aliase[role_name]||aliase[role_name].remove===false) {message.channel.send(role_name+' роль не доступна для данной манипуляций или не существует'); return;};
-   role_name=aliase[role_name].name;
+   role_name=aliase[role_name].name.toLowerCase();
    let role_=await message.guild.roles.find(r=>r.name.toLowerCase()==role_name);
    if(!role_){message.channel.send(role_name+' роль не найдена '); return;};
    if(!mmb.roles.get(role_.id)) {return;};
@@ -214,7 +170,7 @@ try{
    let role_=await message.guild.roles.find(r=>r.name==module.exports.e.sm_role_name);
    if(!role_){message.channel.send('роль не найдена '+module.exports.e.sm_role_name); return false;};
    if(message.member.roles.find(r=>r.name==module.exports.e.sm_role_name)){return true;};
-    message.channel.send(message.member+' недостаточно прав');
+    //message.channel.send(message.member+' недостаточно прав');
     return false;
 }catch(err){console.log(err);};
 };//createRole end
@@ -227,10 +183,32 @@ try{
    if(!log_mod){console.log('log channel not found'); return;};
   // log_mod.send(message.member+action+"`"+role_name+"`  "+mmb);
   //let str = (all)?message.member+'\n':message.member;
+   if(!action.description) return;
    let emb={fields:[{name:action.name,value:action.description}],timestamp: new Date(),color:colors[action.color]};
    log_mod.send({embed:emb});
 }catch(err){console.log(err);};
 };//createRole end
-
-
+//______________sf5
+exports.selfRoles=async(client,message)=>{
+try{ 
+   let str = message.content.split(' '); str.shift(); str=str.join(' ');
+   let rls_arr=(str.indexOf(',')!=-1)?str.split(','):[str];
+   console.log(rls_arr);
+   rls_arr.map(e=>{
+       if(e.startsWith('-')){
+              module.exports.removeRole(client,message,message.member,e.slice(1),self_roles);
+             return;
+       };//if -
+         if(e.startsWith('+')){
+             module.exports.giveRole(client,message,message.member,e.slice(1),self_roles);
+             return;
+       };//if -
+             module.exports.giveRole(client,message,message.member,e,self_roles);
+             return;
+   });//map end
+   total_log='';
+   return;
+}catch(err){console.log(err);};
+};//createRole end
+//(node:279) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 guildMemberUpdate listeners added. Use emitter.setMaxListeners() to increase limit
 

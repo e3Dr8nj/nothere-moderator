@@ -13,6 +13,7 @@ const Discord = require("discord.js");
 const client = new Discord.Client();
 client.SERVER_ID='301063859702071316';
 client.Attachment = Discord.Attachment;
+client.test_mode=false;
 client.lang = 1;
 client.data={
 dataBase_name:'test_bd.bd',

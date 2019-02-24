@@ -1,7 +1,7 @@
 //________________________________________INITIATION_PART__________________________________________
 let ph={};
 ph.unmute=['размуть','потом','нит <:28:402137551961325598>','размутил','Сам размуть, я устал..'];
-ph.warn=['Еще одно нарушение и вас могут замутить.<:34:402137690318962688> '];
+ph.warn=['За следующее нарушение будет мут. <:34:402137690318962688>  '];
 ph.mute=['Рандомный объект замучен.'];
 //_____________SETTINGS
 //ORIGINAL VERSON
@@ -22,7 +22,7 @@ exports.d={
 exports.e={
      ch_log_name:'лог-мод'
     ,bd_name:'BD_muted2.bd'
-    ,table_name:'table_10' 
+    ,table_name:'table_11' 
     ,min_tag_time: 10*1000*60
     ,mute_role_name:'Muted'
     ,moderator_name:'Модератор'
@@ -44,6 +44,9 @@ module.exports.commands.muteWarn={ on:true, aliase:'варн!', run:async(client
 //if on this function triggers on deffined command
              
              let allow_warn=await module.exports.check(client,message,message.member,'actor');
+              
+              let super_moderator_role = message.member.guild.roles.find(r=>r.name==module.exports.e.super_moderator_name);
+              if(!!super_moderator_role&&message.member.roles.get(super_moderator_role.id)){allow_warn=true;};
               if(!allow_warn) {return message.channel.send(message.member+' У вас недостаточно прав, лалка');};
              let mmb = message.mentions.members.first();
               if(!mmb){
@@ -52,7 +55,7 @@ module.exports.commands.muteWarn={ on:true, aliase:'варн!', run:async(client
               };
               let rnd = Math.floor(Math.random()*ph.warn.length);           
                     message.channel.send(mmb+" "+ph.warn[rnd]);
-                    await module.exports.log(client,message,{name:'Предупреждение',description:' предупредил '+mmb+' '+mmb.username+mmb.discriminator+' ',color:'red2'});
+                    await module.exports.log(client,message,{name:'Предупреждение',description:' предупредил '+mmb+' '+mmb.user.username+mmb.user.discriminator+' ',color:'red2'});
               return;        
 
 }catch(err){console.log(err);};}};//
@@ -64,8 +67,8 @@ module.exports.commands.muteHelp={ on:true, aliase:'мутхелп', run:async(c
               let str=prefix+'[мутхелп]-инфо \n';
               str+=prefix+'[бот-лалка]-самомут на рнд. время (30м-3ч) \n';
               str+=prefix+'[размуть <участник сервера>]-размут \n';
-              str+=prefix+'[помолчика <участник сервера> (1д 10ч 30м)* ---<причина>]-мут/временный* \n';
-              str+=prefix+'[варн!<участник сервера> ---<причина>]-варн участнику сервера \n';
+              str+=prefix+'[помолчика <участник сервера> (1д 10ч 30м)* --<причина>]-мут/временный* \n';
+              str+=prefix+'[варн!<участник сервера> --<причина>]-варн участнику сервера \n';
               str+=prefix+'пс:Команды работают и без упоминаний, но это не точно.';
               message.channel.send(str,{code:'ini'});
               
@@ -81,6 +84,9 @@ module.exports.commands.selfmute={ on:true, aliase:'бот-лалка', run:asyn
               let rnd_time=Math.ceil(Math.random()*18+3)*10*60*1000; 
              //message.channel.send(rnd_time);
               let mmb = message.member;
+                let rnd = Math.floor(Math.random()*3);
+                if(rnd==0) return message.channel.send(mmb+' сам лалка');
+                if(rnd==1) return message.channel.send(mmb+' уфф');
               //if(!mmb){message.channel.send('щас буду мутить, мля'); return;};
               message.channel.send(mmb+' Замучен на '+Number(rnd_time)/(60*1000)+' минут'); 
               //return;
@@ -98,6 +104,9 @@ module.exports.commands.unmute={ on:true, aliase:'размуть', run:async(cli
 //if on this function triggers on deffined command
               
              let allow_unmute=await module.exports.check(client,message,message.member,'actor');
+             
+              let super_moderator_role = message.member.guild.roles.find(r=>r.name==module.exports.e.super_moderator_name);
+              if(!!super_moderator_role&&message.member.roles.get(super_moderator_role.id)){allow_unmute=true;};
               if(!allow_unmute) {return message.channel.send('У вас недостаточно прав, лалка');};
               
               let mmb = message.mentions.members.first();
