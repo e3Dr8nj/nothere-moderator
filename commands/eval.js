@@ -36,7 +36,7 @@ try {
       const code = args.slice(1).join(" ");
       console.log(code);
       message.channel.send(`\`ERROR\` \`\`\`xl\n>>${code} \n<<${clean(err)}\n\`\`\``);
-      message.delete().catch(err=>console.log(err));
+     // message.delete().catch(err=>console.log(err));
     }
 };//process end
 process();

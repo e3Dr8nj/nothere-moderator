@@ -55,16 +55,19 @@ module.exports.commands.roleHelp={ on:true, aliase:'рольхелп', run:async
 //if on this function triggers on deffined command
               let isAble=await module.exports.isAble(client,message);
               let str =''; let px=client.prefix;
+  /*
               str+='['+px+'роль +роль1] взять роль1\n';
               str+='['+px+'роль -роль1] снять роль1\n';
               str+='['+px+'роль +роль1,-роль2]\n*взять роль1 снять роль2\n';
               str+='  +/-DJ\n  +/-craig\n  +/-токсик\n +/-пинг\n +/-викторина\n';
+  */
               if(isAble){
                   str+='['+px+'роль @nick1 +роль1,-роль2,-роль3]\n';
                   str+='['+px+'роль @nick1 @nick2 +роль1,+роль2,-роль3]\n*+выдать роль -снять роль \n';
                   str+='  +/-Адепты Хаоса\n  +/-Кто все эти люди\n  +/-Странники\n  -Временная роль\n  +/-Лампочка\n  +/-Звездочка\n';
                   str+='  -Модератор\n  -Сумеречные\n';
               };//isAble true;
+              if(!isAble) {return;};
               message.channel.send(str,{code:'ini'});
 }catch(err){console.log(err);};}};//
 //_______c1

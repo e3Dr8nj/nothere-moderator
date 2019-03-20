@@ -30,6 +30,9 @@ try{
  module.exports.onGuildCreate=async(client)=>{try{
     await exports.delay(1000);
     console.log('onGuildCreate');
+   await client.guilds.get(client.SERVER_ID).fetchMembers()
+  .then()
+  .catch(console.error);
    await module.exports.setBoot(client,'command');
    let res = await  module.exports.setBoot(client,'module');
    await  module.exports.setBoot(client,'event');

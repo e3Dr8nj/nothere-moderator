@@ -1,4 +1,5 @@
 //________________________________________INITIATION_PART__________________________________________
+let random =(max)=>{ return Math.floor(Math.random()*max);};
 let ph={};
 ph.unmute=['размуть','потом','нит <:28:402137551961325598>','размутил','Сам размуть, я устал..'];
 ph.warn=['За следующее нарушение будет мут. <:34:402137690318962688>  '];
@@ -31,9 +32,10 @@ exports.e={
 //_________________________________________INITIATION_PART_END___________________________________________
 let limiter=10*24*60*60*1000;
 //_________________________________________EVENTS_PART_________________________________________________
-module.exports.events.someEvent={ on:true,  run:async(client,event_parametrs)=>{try{
+module.exports.events.guildMemberAdd={ on:true,  run:async(client,member)=>{try{
 //if on this function triggers on deffined event
-              
+  //console.log('d');
+              return module.exports.checkBDMute(client,member);
 
 }catch(err){console.log(err);};}};//
 
@@ -81,12 +83,28 @@ module.exports.commands.selfmute={ on:true, aliase:'бот-лалка', run:asyn
 //if on this function triggers on deffined command
               let emoji = message.guild.emojis.get('402137670345687050');
               if(!!emoji)  await message.react(emoji); 
-              let rnd_time=Math.ceil(Math.random()*18+3)*10*60*1000; 
+              let rnd_time=Math.ceil((Math.random()*24)+6)*10*60*1000; 
              //message.channel.send(rnd_time);
               let mmb = message.member;
-                let rnd = Math.floor(Math.random()*3);
-                if(rnd==0) return message.channel.send(mmb+' сам лалка');
-                if(rnd==1) return message.channel.send(mmb+' уфф');
+               // let rnd = Math.floor(Math.random()*3);
+               
+            let rnd= random(7);
+          
+           if (!client.self_mute_last_rnd) client.self_mute_last_rnd=[0,0];
+           let len = client.self_mute_last_rnd.length;
+           let last_two=[ client.self_mute_last_rnd[len-1], client.self_mute_last_rnd[len-2] ];
+           console.log(last_two);
+           if(rnd!=0&&last_two[0]!=0&&last_two[1]!=0) rnd=0;
+           client.self_mute_last_rnd.push(rnd);
+          
+                if(rnd==1) return message.channel.send(mmb+' сам лалка');
+                if(rnd==2) return message.channel.send(mmb+' уфф');
+                
+                if(rnd==3) return message.channel.send(mmb+' Слишком эмоционально, садись два.');
+                if(rnd==4) return message.channel.send(mmb+' оскорбления признак низкого уровня развития');
+                if(rnd==5) return message.channel.send(mmb+' нит');
+                if(rnd==6) return message.channel.send(mmb+' ты заблочен');
+               
               //if(!mmb){message.channel.send('щас буду мутить, мля'); return;};
               message.channel.send(mmb+' Замучен на '+Number(rnd_time)/(60*1000)+' минут'); 
               //return;
@@ -134,10 +152,10 @@ module.exports.commands.unmute={ on:true, aliase:'размуть', run:async(cli
 module.exports.commands.timemute={ on:true, aliase:'помолчика', run:async(client,message,args)=>{try{
 //if on this function triggers on deffined command
               let allow_mute=await module.exports.check(client,message,message.member,'actor');
-
+              
               let super_moderator_role = message.member.guild.roles.find(r=>r.name==module.exports.e.super_moderator_name);
               if(!!super_moderator_role&&message.member.roles.get(super_moderator_role.id)){allow_mute=true;};
-
+              
               if(!allow_mute) {return message.channel.send('У вас недостаточно прав, лалка');};
               let mmb = message.mentions.members.first();
               if(!mmb){
@@ -181,7 +199,7 @@ module.exports.commands.timemute={ on:true, aliase:'помолчика', run:asy
                     if(args[i].endsWith('ч')){  n = parseInt(args[i]); n=n*1000*60*60; times+=n; console.log(n+' '+'hourses');  };
                     if(args[i].endsWith('д')){  n = parseInt(args[i]); n=n*1000*60*60*24; times+=n; console.log(n+' '+'days'); };
               };//for end
-              if(Number.isNaN(times)){message.reply('Не верно указанное время, или не добавлено -- два дефиса после ника нарушителя.'); return;};
+              if(Number.isNaN(times)||times==0){message.reply('Не верно указанное время, или не добавлено -- два дефиса после ника нарушителя.'); return;};
              
              message.channel.send(mmb+' Снимаются роли доступа.');
              let more=false;
@@ -401,3 +419,25 @@ try{
    log_mod.send({embed:emb});
 }catch(err){console.log(err);};
 };//log end
+
+exports.checkBDMute=async(client,member)=>{try{
+          //let sqlite = require('../modules/aa-sqlite');
+          let bd_name = module.exports.e.bd_name;
+          let table_name = module.exports.e.table_name;
+      
+          let resolve={};
+          await sqlite.open(`./${bd_name}`).catch(err=>{console.log(err);});
+          resolve = await sqlite.get(`SELECT * FROM ${table_name} WHERE user_id=='${member.user.id}'`).then(raw=>{return raw;}).catch(err=>console.log(err));
+          if(!resolve) {console.log('mmb is not muted'); return;};
+
+          let current_time=new Date().getTime();
+          let i_time=0; 
+          let tag=Number(resolve.time)-Number(current_time);
+          console.log(tag);
+          if(tag<=0) return;
+          await module.exports.roleMute(client,member,'add');
+          console.log('addRole Mute');
+          return; 
+           
+
+}catch(err){console.log(err);};};//getRolesMmb end

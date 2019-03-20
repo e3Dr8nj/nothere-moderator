@@ -88,7 +88,7 @@ module.exports.commands.postAll={ on:true, aliase:'raPrint', run:async(client,me
                        await m_d1.delete(); await m_d2.delete();
 }catch(err){console.log(err);};}};//
 //________________c2
-module.exports.commands.rolesProfile={ on:true, aliase:'rpReload', run:async(client,message,args)=>{try{
+module.exports.commands.rolesProfile={ on:true, aliase:'raReload', run:async(client,message,args)=>{try{
 //if on this function triggers on deffined command
                       
                        return module.exports.run(client,message,args);
