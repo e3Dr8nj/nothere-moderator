@@ -61,13 +61,14 @@ module.exports.commands.roleHelp={ on:true, aliase:'рольхелп', run:async
               str+='['+px+'роль +роль1,-роль2]\n*взять роль1 снять роль2\n';
               str+='  +/-DJ\n  +/-craig\n  +/-токсик\n +/-пинг\n +/-викторина\n';
   */
+              str+='['+px+'роль название роли] - показать список участников с этой ролью\n';
               if(isAble){
                   str+='['+px+'роль @nick1 +роль1,-роль2,-роль3]\n';
                   str+='['+px+'роль @nick1 @nick2 +роль1,+роль2,-роль3]\n*+выдать роль -снять роль \n';
                   str+='  +/-Адепты Хаоса\n  +/-Кто все эти люди\n  +/-Странники\n  -Временная роль\n  +/-Лампочка\n  +/-Звездочка\n';
                   str+='  -Модератор\n  -Сумеречные\n';
               };//isAble true;
-              if(!isAble) {return;};
+              //if(!isAble) {return;};
               message.channel.send(str,{code:'ini'});
 }catch(err){console.log(err);};}};//
 //_______c1
@@ -76,7 +77,7 @@ module.exports.commands.manipuleRole={ on:true, aliase:'роль', run:async(cli
            total_log='';
            if(!message.mentions.members.first()){
              
-             return module.exports.selfRoles(client,message);
+             return module.exports.roleList(client,message,args);
            };//selfroles mode
            let isAble=await module.exports.isAble(client,message);
            if(!isAble) {
@@ -192,24 +193,23 @@ try{
 }catch(err){console.log(err);};
 };//createRole end
 //______________sf5
-exports.selfRoles=async(client,message)=>{
+exports.roleList=async(client,message,args)=>{
 try{ 
-   let str = message.content.split(' '); str.shift(); str=str.join(' ');
-   let rls_arr=(str.indexOf(',')!=-1)?str.split(','):[str];
-   console.log(rls_arr);
-   rls_arr.map(e=>{
-       if(e.startsWith('-')){
-              module.exports.removeRole(client,message,message.member,e.slice(1),self_roles);
-             return;
-       };//if -
-         if(e.startsWith('+')){
-             module.exports.giveRole(client,message,message.member,e.slice(1),self_roles);
-             return;
-       };//if -
-             module.exports.giveRole(client,message,message.member,e,self_roles);
-             return;
-   });//map end
-   total_log='';
+   args.shift();
+    if(args.length===0) return;
+    let str = args.join(" ");
+    let role = message.guild.roles.find(r=>r.name.toLowerCase()===str.toLowerCase());
+    if(!role) return;
+    let count = role.members.array().length;
+    let mmb_str = 'участники с ролью ['+ str +'] '+ count +'\n';
+    let nick='';
+    role.members.map(e=>{
+       nick=(e.nickname)?e.nickname:'';
+       mmb_str+=nick+'('+e.user.username+') #'+e.user.discriminator+' '+e.user.id+'\n';
+   
+    });
+    mmb_str=(mmb_str.length<1900)?mmb_str:mmb_str.slice(0,1900);
+    message.channel.send(mmb_str,{code:'ini'});
    return;
 }catch(err){console.log(err);};
 };//createRole end
