@@ -1,4 +1,5 @@
 //________________________________________INITIATION_PART__________________________________________
+let delay=async(duration)=>{await new Promise(resolve=>setTimeout(resolve,duration))}; 
 //_____________SETTINGS
 exports.active=true;//this module activate (deactivate module and all events,commands,boot in it if value is false)
 exports.events=false;// {} - activate/false - deactive
@@ -6,7 +7,7 @@ exports.commands={};// {} - activate/false -deactive
 exports.boots=false;// {} - activate/false -deactive
 //exports.m=require('./this_project_main.js'); //inculde this project`s main file if present (same directory)
 //____________DICTIONARY//dictionary set, elements by accesed by module.exports.d.some_phase[client.lang] 
-module.exports.idk="ˈ";
+module.exports.idk=".";
 const aliase ={
   'адепты хаоса':{name:'адепты хаоса',add:true,remove:true}
   ,'временная роль':{name:'временная роль',add:false,remove:true}
@@ -69,12 +70,13 @@ module.exports.commands.roleHelp={ on:true, aliase:'рольхелп', run:async
                   str+='['+px+'роль @nick1 +роль1] +выдать роль \n';
                   str+='['+px+'роль @nick1 -роль1] -снять роль \n';
                   str+='['+px+'роль @nick1 *роль1] *cоздать роль и выдать \n';
-                  str+='['+px+'роль @nick1 :роль1] :снять роль и удалить ее \n';
-                  str+='['+px+'роль @nick1 @nick2 +роль1,-роль2,-роль3,*роль4,:роль5 ]\n';
+                  str+='['+px+'роль @nick1 %роль1] %снять роль и удалить ее \n';
+                  str+='['+px+'роль @nick1 @nick2 +роль1,-роль2,-роль3,*роль4,%роль5 ]\n';
                   str+='* применить несколько действий к нескольким участникам\n';
                   str+='  +/-Адепты Хаоса\n  +/-Кто все эти люди\n  +/-Странники\n  -Временная роль\n  +/-Лампочка\n  +/-Звездочка\n';
                   str+='  -Модератор\n  -Сумеречные\n';
                   str+='+/- все созданные ранее роли (['+px+'роль ?*] -список ролей)\n';
+                  str+='['+px+'роль удалить название роли(без точки в конце)] +удалить роль \n';
               };//isAble true;
               //if(!isAble) {return;};
               message.channel.send(str,{code:'ini'});
@@ -83,22 +85,31 @@ module.exports.commands.roleHelp={ on:true, aliase:'рольхелп', run:async
 module.exports.commands.manipuleRole={ on:true, aliase:'роль', run:async(client,message,args)=>{try{
 //if on this function triggers on deffined command
            total_log='';
+           let isAble=await module.exports.isAble(client,message);
            if(!message.mentions.members.first()){
 //
             if(args[1].startsWith("?")) {
-             if (args[1].length==1) return module.exports.roleListName(client,message,args);
-              return module.exports.roleListCreated(client,message,args);
+               if (args[1].length==1) return module.exports.roleListName(client,message,args);
+               return module.exports.roleListCreated(client,message,args);
+            };
+           
+         
+
+             if(args[1].startsWith("удалить")&&isAble) {
+               
+               return module.exports.deleteRole(client,message,false,args.slice(2).join(" "));
             };
 //
              return module.exports.roleList(client,message,args);
 
 
            };//selfroles mode
-
-           let isAble=await module.exports.isAble(client,message);
+            
+            
            if(!isAble) {
              message.channel.send(message.member+' недостаточно прав');
              return false;}
+         
            
             let mmbs = message.mentions.members.keyArray();
             let msg_cnt =message.content.split('>');
@@ -123,7 +134,7 @@ module.exports.commands.manipuleRole={ on:true, aliase:'роль', run:async(cli
                                 r_n=r_n.slice(1); 
                                 r_n = (r_n.startsWith(' '))?r_n.slice(1):r_n;
                                 await module.exports.createRole(client,message,mmb,r_n,aliase); 
-                            }else if(r_n.startsWith(':')){
+                            }else if(r_n.startsWith('%')){
                                 r_n=r_n.slice(1); 
                                 r_n = (r_n.startsWith(' '))?r_n.slice(1):r_n;
                                 await module.exports.deleteRole(client,message,mmb,r_n,aliase); 
@@ -163,10 +174,10 @@ try{
       return;
    }else{
     
-     await module.exports.removeRole(client,message,mmb,role_name,aliase);
+   if(mmb)  await module.exports.removeRole(client,message,mmb,role_name,aliase);
      let role_deleted = await sprole.delete().then(()=>message.channel.send(role_name+" роль удалена")).catch(err=>console.log(err));
      if(!role_deleted) return;
-     total_log+=message.member+' удалил роль  `'+role_name+'\n';
+    if(mmb) total_log+=message.member+' удалил роль  `'+role_name+'\n';
      return;
     };
   return;
@@ -183,8 +194,33 @@ try{
      return module.exports.giveRole(client,message,mmb,role_name,aliase);
    }else{
      
-     let role_created = await message.guild.createRole({name:role_name+module.exports.idk,position:1}).then(()=>message.channel.send(role_name+" роль создана")).catch(err=>console.log(err));
+//
+     let sp_roles=message.guild.roles.filter(r=>r.name.endsWith(module.exports.idk));
+     sp_roles.map(r=>{
+           console.log(r.name);
+           if(r.members.array().length==0){message.guild.roles.get(r.id).delete();console.log('role has no member delete '+r.name);}
+     });
+     await delay(1000);
+     sp_roles=await message.guild.roles.filter(r=>r.name.endsWith(module.exports.idk));
+     let len = sp_roles.array().length;
+     if(len>4){message.channel.send('Превышено допустимое колличество создаваемых ролей, удалите ненужные [роль удалить название_роли]-удалить роль, [роль ?*]-посмотеть список созданных ролей', ); return;};
+    
+/*
+     if(len>4){
+       sp_roles.map(r=>console.log(r.name+' '+r.position));
+       sp_roles.sort(function(a,b){return a.position>b.position;});
+       sp_roles.map(r=>console.log(r.name+' '+r.position));
+       for(let i=0;i++;i<len-4+1){
+          message.guild.roles.get(sp_roles[i].id).delete();
+       };
+
+     };
+*/
+     
+//
+     let role_created = await message.guild.createRole({name:role_name+module.exports.idk,position:1,color:0xf47fff}).then(()=>message.channel.send(role_name+" роль создана")).catch(err=>console.log(err));
      if(!role_created) return;
+     //console.log(role_created);
      total_log+=message.member+' создал роль  `'+role_name+'\n';
      return module.exports.giveRole(client,message,mmb,role_name,aliase);
     };
@@ -229,7 +265,9 @@ try{
    let role_=await message.guild.roles.find(r=>r.name.toLowerCase()==role_name);
    if(!role_){message.channel.send(role_name+' роль не найдена '); return;};
    if(!mmb.roles.get(role_.id)) {return;};
+  
     await mmb.removeRole(role_); message.channel.send(role_.name+' роль снята c '+mmb.user.username);
+    
     //await module.exports.log(client,message, {name:'Управление ролями', description:' снял роль  `'+role_.name+'` с '+mmb+' '+mmb.user.username+mmb.user.discriminator,color:'blue'});
    total_log+=message.member+' снял роль  `'+role_.name+'` с '+mmb+' '+mmb.user.username+mmb.user.discriminator+'\n';
     return;
@@ -311,10 +349,10 @@ try{
     
             
 
-              let patt=new RegExp(module.exports.idk);
+             // let patt=new RegExp(module.exports.idk);
               
-              if(!patt) return;
-              let n_a=message.guild.roles.filter(r=>patt.test(r.name));
+            //  if(!patt) return;
+              let n_a=message.guild.roles.filter(r=>r.name.endsWith(module.exports.idk));
               let str='';
               n_a.map(r=>str+=r.name+" "+r.members.array().length+"\n");
               let p_str=n_a.array().length+" созданных ролей найдено \n";
@@ -324,3 +362,5 @@ try{
    return;
 }catch(err){console.log(err);};
 };//createRole end
+//__________sf8
+
