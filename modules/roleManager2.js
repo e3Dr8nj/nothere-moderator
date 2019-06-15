@@ -6,7 +6,7 @@ exports.commands={};// {} - activate/false -deactive
 exports.boots=false;// {} - activate/false -deactive
 //exports.m=require('./this_project_main.js'); //inculde this project`s main file if present (same directory)
 //____________DICTIONARY//dictionary set, elements by accesed by module.exports.d.some_phase[client.lang] 
-
+module.exports.idk="ˈ";
 const aliase ={
   'адепты хаоса':{name:'адепты хаоса',add:true,remove:true}
   ,'временная роль':{name:'временная роль',add:false,remove:true}
@@ -62,11 +62,19 @@ module.exports.commands.roleHelp={ on:true, aliase:'рольхелп', run:async
               str+='  +/-DJ\n  +/-craig\n  +/-токсик\n +/-пинг\n +/-викторина\n';
   */
               str+='['+px+'роль название роли] - показать список участников с этой ролью\n';
+              str+='['+px+'роль ? паттерн флаги] - найти названия ролей по маске (regExp)\n';
+             
               if(isAble){
-                  str+='['+px+'роль @nick1 +роль1,-роль2,-роль3]\n';
-                  str+='['+px+'роль @nick1 @nick2 +роль1,+роль2,-роль3]\n*+выдать роль -снять роль \n';
+                  
+                  str+='['+px+'роль @nick1 +роль1] +выдать роль \n';
+                  str+='['+px+'роль @nick1 -роль1] -снять роль \n';
+                  str+='['+px+'роль @nick1 *роль1] *cоздать роль и выдать \n';
+                  str+='['+px+'роль @nick1 :роль1] :снять роль и удалить ее \n';
+                  str+='['+px+'роль @nick1 @nick2 +роль1,-роль2,-роль3,*роль4,:роль5 ]\n';
+                  str+='* применить несколько действий к нескольким участникам\n';
                   str+='  +/-Адепты Хаоса\n  +/-Кто все эти люди\n  +/-Странники\n  -Временная роль\n  +/-Лампочка\n  +/-Звездочка\n';
                   str+='  -Модератор\n  -Сумеречные\n';
+                  str+='+/- все созданные ранее роли (['+px+'роль ?*] -список ролей)\n';
               };//isAble true;
               //if(!isAble) {return;};
               message.channel.send(str,{code:'ini'});
@@ -76,9 +84,17 @@ module.exports.commands.manipuleRole={ on:true, aliase:'роль', run:async(cli
 //if on this function triggers on deffined command
            total_log='';
            if(!message.mentions.members.first()){
-             
+//
+            if(args[1].startsWith("?")) {
+             if (args[1].length==1) return module.exports.roleListName(client,message,args);
+              return module.exports.roleListCreated(client,message,args);
+            };
+//
              return module.exports.roleList(client,message,args);
+
+
            };//selfroles mode
+
            let isAble=await module.exports.isAble(client,message);
            if(!isAble) {
              message.channel.send(message.member+' недостаточно прав');
@@ -103,6 +119,14 @@ module.exports.commands.manipuleRole={ on:true, aliase:'роль', run:async(cli
                                 r_n=r_n.slice(1); 
                                 r_n = (r_n.startsWith(' '))?r_n.slice(1):r_n;
                                 await module.exports.giveRole(client,message,mmb,r_n,aliase); 
+                            }else if(r_n.startsWith('*')){
+                                r_n=r_n.slice(1); 
+                                r_n = (r_n.startsWith(' '))?r_n.slice(1):r_n;
+                                await module.exports.createRole(client,message,mmb,r_n,aliase); 
+                            }else if(r_n.startsWith(':')){
+                                r_n=r_n.slice(1); 
+                                r_n = (r_n.startsWith(' '))?r_n.slice(1):r_n;
+                                await module.exports.deleteRole(client,message,mmb,r_n,aliase); 
                             }else{
                                 r_n=r_n.slice(1);
                                 r_n = (r_n.startsWith(' '))?r_n.slice(1):r_n;
@@ -130,17 +154,56 @@ module.exports.boots.someBoot={ on:true,  run:async(client)=>{try{
 
 //___________________________________________BOOTS_PART_END______________________________________________
 //______________________________SUB__FUNCTIONS
+//_______SF-1
+exports.deleteRole=async(client,message,mmb,role_name,aliase)=>{
+try{ 
+   role_name=role_name.toLowerCase();
+   let sprole=await message.guild.roles.find(r=>r.name.toLowerCase()==role_name+module.exports.idk);
+   if(!sprole){
+      return;
+   }else{
+    
+     await module.exports.removeRole(client,message,mmb,role_name,aliase);
+     let role_deleted = await sprole.delete().then(()=>message.channel.send(role_name+" роль удалена")).catch(err=>console.log(err));
+     if(!role_deleted) return;
+     total_log+=message.member+' удалил роль  `'+role_name+'\n';
+     return;
+    };
+  return;
+}catch(err){console.log(err);};
+};//createRole end
 //_______SF0
-
+exports.createRole=async(client,message,mmb,role_name,aliase)=>{
+try{ 
+   role_name=role_name.toLowerCase();
+   
+   let sprole=await message.guild.roles.find(r=>r.name.toLowerCase()==role_name+module.exports.idk);
+   if(sprole){
+     
+     return module.exports.giveRole(client,message,mmb,role_name,aliase);
+   }else{
+     
+     let role_created = await message.guild.createRole({name:role_name+module.exports.idk,position:1}).then(()=>message.channel.send(role_name+" роль создана")).catch(err=>console.log(err));
+     if(!role_created) return;
+     total_log+=message.member+' создал роль  `'+role_name+'\n';
+     return module.exports.giveRole(client,message,mmb,role_name,aliase);
+    };
+  return;
+}catch(err){console.log(err);};
+};//createRole end
 //_______SF1
 exports.giveRole=async(client,message,mmb,role_name,aliase)=>{
 try{ 
    role_name=role_name.toLowerCase();
-   if(!aliase[role_name]||aliase[role_name].add===false) {
+   
+   let sprole=await message.guild.roles.find(r=>r.name.toLowerCase()==role_name+module.exports.idk);
+
+   if( (!aliase[role_name]||aliase[role_name].add===false)&&(!sprole) ) {
         message.channel.send(role_name+' - роль неверно указана, или недоступна для данной манипуляции. \\'+client.prefix+'рольхелп');
         return;
    };
-   role_name=aliase[role_name].name.toLowerCase();
+   if(!sprole) role_name=aliase[role_name].name.toLowerCase();
+   if(sprole) role_name+=module.exports.idk;
    let role_=await message.guild.roles.find(r=>r.name.toLowerCase()==role_name);
    if(!role_){message.channel.send(role_name+' роль не найдена '); return;};
    if(mmb.roles.get(role_.id)) {return;};
@@ -155,8 +218,14 @@ try{
 exports.removeRole=async(client,message,mmb,role_name,aliase)=>{
 try{ 
    role_name=role_name.toLowerCase();
-   if(!aliase[role_name]||aliase[role_name].remove===false) {message.channel.send(role_name+' роль не доступна для данной манипуляций или не существует'); return;};
-   role_name=aliase[role_name].name.toLowerCase();
+   let sprole=await message.guild.roles.find(r=>r.name.toLowerCase()==role_name+module.exports.idk);
+   
+   if( (!aliase[role_name]||aliase[role_name].remove===false)&&(!sprole) ) {
+        message.channel.send(role_name+' - роль неверно указана, или недоступна для данной манипуляции. \\'+client.prefix+'рольхелп');
+        return;
+   };
+   if(!sprole) role_name=aliase[role_name].name.toLowerCase();
+   if(sprole) role_name+=module.exports.idk;
    let role_=await message.guild.roles.find(r=>r.name.toLowerCase()==role_name);
    if(!role_){message.channel.send(role_name+' роль не найдена '); return;};
    if(!mmb.roles.get(role_.id)) {return;};
@@ -215,3 +284,43 @@ try{
 };//createRole end
 //(node:279) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 guildMemberUpdate listeners added. Use emitter.setMaxListeners() to increase limit
 
+//____________sf6
+exports.roleListName=async(client,message,args)=>{
+try{ 
+    
+
+              if(!args[2]) return;
+              args[3]=(args[3])?args[3]:'i';
+          
+               let patt=new RegExp(args[2],args[3]);
+              
+              if(!patt) return;
+              let n_a=message.guild.roles.filter(r=>patt.test(r.name));
+              let str='';
+              n_a.map(r=>str+=r.name+" "+r.members.array().length+"\n");
+              let p_str=n_a.array().length+" ролей найдено \n";
+              str=(str.length<1900)?str:str.slice(0,1900);
+              message.channel.send(p_str+str,{code:'ini'});
+              
+   return;
+}catch(err){console.log(err);};
+};//createRole end
+//____________sf7
+exports.roleListCreated=async(client,message,args)=>{
+try{ 
+    
+            
+
+              let patt=new RegExp(module.exports.idk);
+              
+              if(!patt) return;
+              let n_a=message.guild.roles.filter(r=>patt.test(r.name));
+              let str='';
+              n_a.map(r=>str+=r.name+" "+r.members.array().length+"\n");
+              let p_str=n_a.array().length+" созданных ролей найдено \n";
+              str=(str.length<1900)?str:str.slice(0,1900);
+              message.channel.send(p_str+str,{code:'ini'});
+              
+   return;
+}catch(err){console.log(err);};
+};//createRole end
