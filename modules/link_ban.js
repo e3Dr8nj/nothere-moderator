@@ -15,8 +15,9 @@ let random =(max)=>{ return Math.floor(Math.random()*max);};
 
 //___________________________ETERNAL_VARIABLE_PART
 module.exports.e={
-  role_name:"Временная роль"
- ,link:"81ZH2Y"
+  role_name:"Временная роль",
+  role_spamer_name:"Мертвые души",
+ link:"81ZH2Y"
 }
 
 //_________________________________________BOOTS_PART___________________________________________________
@@ -42,7 +43,9 @@ module.exports.events={};
 
 module.exports.events.message={ on:true,run:async(client,message)=>{try{
      let has_role=message.member.roles.find(r=>r.name==module.exports.e.role_name);
-     if((message.content.indexOf(module.exports.e.link)!=-1)&&has_role){
+     
+     let has_role2=message.member.roles.find(r=>r.name==module.exports.e.role_spamer_name);
+     if((message.content.indexOf(module.exports.e.link)!=-1)&&(has_role||has_role2)){
              
             message.member.ban(1).then(() =>message.channel.send(`Banned ${message.member.displayName}`)).catch(console.error);
      };
