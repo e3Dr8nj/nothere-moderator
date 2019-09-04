@@ -133,7 +133,7 @@ module.exports.commands.unmute={ on:true, aliase:'размуть', run:async(cli
                     message.channel.send(ph.unmute[rnd]); return;
           };//if mmb to unmute is not defined
              // message.channel.send('И пусть бы дальше познавали пустотность бытия.. <:33:402137670345687050> ');
-              message.channel.send(mmb+' Снимается печать немоты. <:43:402137908334821376> ');
+              message.channel.send(mmb+' Снимается печать немоты. <:59:589907585449197570>');
               await module.exports.delay(1000);
               message.channel.send(' Происходит восстановление ролей доступа.');
               let resolve = await module.exports.unmute(client,message,mmb.user.id,0);
