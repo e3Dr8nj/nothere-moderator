@@ -5,6 +5,7 @@ exports.dictionary={
 };
 exports.run =(client,message,args)=>{
 if(message.author.id!='437330563423010827') return message.reply(module.exports.dictionary['use'][client.lang]);
+  console.log('e');
 /*if(message.author.id!='437330563423010827'){
    const code = args.slice(1).join(" ");
   return message.reply('>>'+code+'\n<<'+module.exports.dictionary['use'][client.lang], {code:"xl"});

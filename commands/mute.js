@@ -22,7 +22,7 @@ exports.d={
 //___________ENVORIMENTAL//envorimental set, elements accesed by module.exports.e.some_envorimental
 exports.e={
      ch_log_name:'лог-мод'
-    ,bd_name:'BD_muted2.bd'
+    ,bd_name:'BD_muted3.bd'
     ,table_name:'table_11' 
     ,min_tag_time: 10*1000*60
     ,mute_role_name:'Muted'
