@@ -1,7 +1,7 @@
 //________________________________________INITIATION_PART__________________________________________
 let delay=async(duration)=>{await new Promise(resolve=>setTimeout(resolve,duration))};
 //_____________SETTINGS
-exports.active=true;//this module activate (deactivate module and all events,commands,boot in it if value is false)
+exports.active=false;//this module activate (deactivate module and all events,commands,boot in it if value is false)
 exports.events={};// {} - activate/false - deactive
 exports.commands=false;// {} - activate/false -deactive
 exports.boots=false;// {} - activate/false -deactive
