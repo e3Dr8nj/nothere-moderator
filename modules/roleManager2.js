@@ -9,14 +9,15 @@ exports.boots=false;// {} - activate/false -deactive
 //____________DICTIONARY//dictionary set, elements by accesed by module.exports.d.some_phase[client.lang] 
 module.exports.idk=".";
 const aliase ={
-  'адепты хаоса':{name:'адепты хаоса',add:true,remove:true}
+  'мертвые души':{name:'мертвые души',add:true,remove:true}
+  ,'адепты хаоса':{name:'адепты хаоса',add:true,remove:true}
   ,'временная роль':{name:'временная роль',add:false,remove:true}
   ,'странники':{name:'странники', add:true,remove:true}
   ,'лампочка':{name:'💡',add:true, remove:true}
   ,'звездочка':{name:'✴',add:true, remove:true}
   ,'кто все эти люди':{name:'кто все эти люди',add:true,remove:true}
   ,'модератор':{name:'модератор',add:false,remove:true}
-  ,'сумеречные':{name:'сумеречные',add:false,remove:true}
+  ,'сумеречные':{name:'сумеречные',add:true,remove:true}
 };
 
 const self_roles ={
@@ -62,7 +63,7 @@ module.exports.commands.roleHelp={ on:true, aliase:'рольхелп', run:async
               str+='['+px+'роль +роль1,-роль2]\n*взять роль1 снять роль2\n';
               str+='  +/-DJ\n  +/-craig\n  +/-токсик\n +/-пинг\n +/-викторина\n';
   */
-              str+='['+px+'роль название роли] - показать список участников с этой ролью\n';
+              str+='['+px+'роль название роли или id] - показать список участников с этой ролью\n';
               str+='['+px+'роль ? паттерн флаги] - найти названия ролей по маске (regExp)\n';
              
               if(isAble){
@@ -121,7 +122,9 @@ module.exports.commands.manipuleRole={ on:true, aliase:'роль', run:async(cli
                         try{
                             let mmb= await message.member.guild.fetchMember(mmbs[ii]).catch(err=>console.log(err));
                             console.log(mmb.user.username);
+                            role_names[i]=role_names[i].trim();
                             let r_n = (role_names[i].startsWith(' '))?role_names[i].slice(1):role_names[i];
+                          console.log(r_n);
                             if(r_n.startsWith('-')){
                                 r_n=r_n.slice(1); 
                                 r_n = (r_n.startsWith(' '))?r_n.slice(1):r_n;
@@ -306,6 +309,8 @@ try{
     if(args.length===0) return;
     let str = args.join(" ");
     let role = message.guild.roles.find(r=>r.name.toLowerCase()===str.toLowerCase());
+    str=str.trim();
+    if(!role) role = message.guild.roles.get(str);
     if(!role) return;
     let count = role.members.array().length;
     let mmb_str = 'участники с ролью ['+ str +'] '+ count +'\n';

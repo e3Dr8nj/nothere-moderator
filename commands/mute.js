@@ -42,7 +42,7 @@ module.exports.events.guildMemberAdd={ on:true,  run:async(client,member)=>{try{
 //___________________________________________EVENTS_PART_END__________________________________________
 //_________________________________________COMMANDS_PART________________________________________________
 //______________________c-2
-module.exports.commands.muteWarn={ on:true, aliase:'варн!', run:async(client,message,args)=>{try{
+module.exports.commands.muteWarn={ on:true, aliase:'предупреждение', run:async(client,message,args)=>{try{
 //if on this function triggers on deffined command
              
              let allow_warn=await module.exports.check(client,message,message.member,'actor');
@@ -69,8 +69,8 @@ module.exports.commands.muteHelp={ on:true, aliase:'мутхелп', run:async(c
               let str=prefix+'[мутхелп]-инфо \n';
               str+=prefix+'[бот-лалка]-самомут на рнд. время (30м-3ч) \n';
               str+=prefix+'[размуть <участник сервера>]-размут \n';
-              str+=prefix+'[помолчика <участник сервера> (1д 10ч 30м)* --<причина>]-мут/временный* \n';
-              str+=prefix+'[варн!<участник сервера> --<причина>]-варн участнику сервера \n';
+              str+=prefix+'[мут <участник сервера> (1д 10ч 30м)* --<причина>]-мут/временный* \n';
+              str+=prefix+'[предупреждение<участник сервера> --<причина>]-предупреждение участнику сервера \n';
               str+=prefix+'пс:Команды работают и без упоминаний, но это не точно.';
               message.channel.send(str,{code:'ini'});
               
@@ -149,7 +149,7 @@ module.exports.commands.unmute={ on:true, aliase:'размуть', run:async(cli
 
 }catch(err){console.log(err);};}};//
 //______________________c2
-module.exports.commands.timemute={ on:true, aliase:'помолчика', run:async(client,message,args)=>{try{
+module.exports.commands.timemute={ on:true, aliase:'мут', run:async(client,message,args)=>{try{
 //if on this function triggers on deffined command
               let allow_mute=await module.exports.check(client,message,message.member,'actor');
               

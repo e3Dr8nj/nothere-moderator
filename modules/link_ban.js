@@ -58,8 +58,8 @@ module.exports.events.message={ on:true,run:async(client,message)=>{try{
        
 
            await message.member.ban(1).then(() =>{
-              message.channel.send(str);
-              module.exports.log(client,message,{name:"Бан ",color:"red",description:str});
+             // message.channel.send(str);
+              //module.exports.log(client,message,{name:"Бан ",color:"red",description:str});
            }).catch(err=>console.error(err));
           await message.delete();
           }catch(err){console.log(err);};

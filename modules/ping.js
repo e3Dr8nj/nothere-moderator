@@ -15,7 +15,7 @@ module.exports.active=true;//for previous rh_handler version(true=module on/fals
 
 //___________________________ETERNAL_VARIABLE_PART
 module.exports.e={
-  bot_name:'moderator'
+  bot_name:'1'
   ,bot_info:'бот выдает цветные и анкетные роли, мутит, выдает роли по запросу'
 }
 
@@ -47,7 +47,7 @@ module.exports.events.message={ on:true,run:async(client,message)=>{try{
         if(message.content.startsWith('?!!*')){ message.reply(client.bot_name+' is online'); return;};
         if(message.content.startsWith('?!!'+client.bot_name+" info")){ message.reply(client.bot_name+" info: "+client.bot_info); return;};
         if(message.content.startsWith('?!!'+client.bot_name)){ message.reply(client.bot_name+' is online'); return;};
-       if(message.content.startsWith('?')){ message.reply('!'); return;};
+       if(message.content.startsWith('? ')){ message.reply('!'); return;};
    };
 
 }catch(err){console.log(err);};}};//
