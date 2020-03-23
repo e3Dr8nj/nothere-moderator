@@ -47,7 +47,9 @@ module.exports.events.message={ on:true,run:async(client,message)=>{try{
         if(message.content.startsWith('?!!*')){ message.reply(client.bot_name+' is online'); return;};
         if(message.content.startsWith('?!!'+client.bot_name+" info")){ message.reply(client.bot_name+" info: "+client.bot_info); return;};
         if(message.content.startsWith('?!!'+client.bot_name)){ message.reply(client.bot_name+' is online'); return;};
-       if(message.content.startsWith('? ')){ message.reply('!'); return;};
+       if(message.content.startsWith('? ')){ message.reply('!'); 
+                                            
+                                            return;};
    };
 
 }catch(err){console.log(err);};}};//

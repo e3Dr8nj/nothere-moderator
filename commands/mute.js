@@ -2,7 +2,7 @@
 let random =(max)=>{ return Math.floor(Math.random()*max);};
 let ph={};
 ph.unmute=['размуть','потом','нит <:28:402137551961325598>','размутил','Сам размуть, я устал..'];
-ph.warn=['За следующее нарушение будет мут. <:34:402137690318962688>  '];
+ph.warn=['За следующее нарушение будет мут. <:81:589907905692696756> '];
 ph.mute=['Рандомный объект замучен.'];
 //_____________SETTINGS
 //ORIGINAL VERSON
@@ -66,13 +66,15 @@ module.exports.commands.muteWarn={ on:true, aliase:'предупреждение
 module.exports.commands.muteHelp={ on:true, aliase:'мутхелп', run:async(client,message,args)=>{try{
 //if on this function triggers on deffined command
               let prefix='\\';
-              let str=prefix+'[мутхелп]-инфо \n';
-              str+=prefix+'[бот-лалка]-самомут на рнд. время (30м-3ч) \n';
-              str+=prefix+'[размуть <участник сервера>]-размут \n';
-              str+=prefix+'[мут <участник сервера> (1д 10ч 30м)* --<причина>]-мут/временный* \n';
-              str+=prefix+'[предупреждение<участник сервера> --<причина>]-предупреждение участнику сервера \n';
-              str+=prefix+'пс:Команды работают и без упоминаний, но это не точно.';
-              message.channel.send(str,{code:'ini'});
+              let str='`'+prefix+'мутхелп` -инфо \n';
+              str+='`'+prefix+'бот-лалка` -самомут на рнд. время (30м-3ч) \n';
+              str+='`'+prefix+'размут @ник`-размут \n';
+              
+              str+='`'+prefix+'мут @ник (1д 10ч 30м)* --причина` -мут/временный* \n';
+              str+='`'+prefix+'предупреждение @ник --причина` -предупреждение участнику сервера \n';
+              str+='`'+prefix+'пс:Команды работают и без упоминаний, но это не точно.`';
+      let str2="\\мутхелп - инфо \n`\\бот-лалка` -самомут на рандомное время (30м-3ч) \n`\\размут @ник` -размут \n`\\мут @ник 30м -- причина`  - временный мут. (1д 10ч 30м) \n`\\предупреждение @ник -- причина` -предупреждение участнику сервера \n```\пс: Команды работают и без указания причины или даже без упоминания ника.```";
+              message.channel.send(str2);
               
               return;        
 
@@ -118,7 +120,7 @@ module.exports.commands.selfmute={ on:true, aliase:'бот-лалка', run:asyn
 
 }catch(err){console.log(err);};}};//
 //_______________________c1
-module.exports.commands.unmute={ on:true, aliase:'размуть', run:async(client,message,args)=>{try{
+module.exports.commands.unmute={ on:true, aliase:'размут', run:async(client,message,args)=>{try{
 //if on this function triggers on deffined command
               
              let allow_unmute=await module.exports.check(client,message,message.member,'actor');

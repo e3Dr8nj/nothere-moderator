@@ -1,6 +1,6 @@
 //________________________________________INITIATION_PART__________________________________________
 //_____________SETTINGS
-exports.active=false;//this module activate (deactivate module and all events,commands,boot in it if value is false)
+exports.active=true;//this module activate (deactivate module and all events,commands,boot in it if value is false)
 exports.events=false;// {} - activate/false - deactive
 exports.commands={};// {} - activate/false -deactive
 exports.boots=false;// {} - activate/false -deactive
