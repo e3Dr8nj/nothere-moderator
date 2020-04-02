@@ -241,7 +241,7 @@ exports.onclickEmoji=async(client,messageReaction,user,action)=>{try{
 */
 //_______________________________________test
 exports.onclickEmoji=async(client,messageReaction,user,action)=>{try{
- 
+ async function f(){
      console.log('emoji_role');
        if ( module.exports.system.messagesID.indexOf(messageReaction.message.id)==-1) return;
      //if(messageReaction.message.id!=module.exports.system.part1.messageID) return;
@@ -253,22 +253,33 @@ exports.onclickEmoji=async(client,messageReaction,user,action)=>{try{
      if(member.user.id==client.user.id) return;
     // if(member.roles.get(roleID)){ member.removeRole(role);  }else{member.addRole(role);};
        if(action=='remove'){ member.removeRole(role);  }else{
+                 
+if(module.exports.e[user.id]&&exports.e[user.id]>new Date().getTime()) return console.log('due time limit'+exports.e[user.id]);
                  //console.log(module.exports.system.temple.roles_arr_id);
                 if(module.exports.system.temple.roles_arr_id.length!=0){
                       let roles_arr_id=module.exports.system.temple.roles_arr_id.slice();
-                      
+                   async function check(){  
                       for(let i=0;i<roles_arr_id.length;i++){
                                //console.log(roles_arr_id[i])
                                let item_role=messageReaction.message.guild.roles.get(roles_arr_id[i]);
-                               if(item_role && member.roles.get(roles_arr_id[i])){ await member.removeRole(item_role);}; 
+                               if(item_role && item_role.id!=role.id&&member.roles.get(roles_arr_id[i])){ member.removeRole(item_role).then(console.log(role.name+'  add')).catch(err=>console.log(err+'222 '+role.name));}; 
                        };//for end
+                     };//ch
+                   await check();
                 };
-                member.addRole(role);
+           
+                let res = await member.addRole(role).then(r=>{exports.e[user.id]=new Date().getTime()+2000;}).catch(err=>{console.log(err+'111');return 2;});
+               await console.log(role.name+' '+res);
+//await delay(1000);
+         
+//await module.exports.e[user.id]=1;
                 
                 };
              //console.log(module.exports.system.temple.roles_arr_id);
      return;
      //if member has role remove it else add
+ };
+ return await f();
      
  }catch(err){console.log(err);};};//onclickEmoji end
 //____________________________________________test end
