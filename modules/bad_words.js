@@ -26,6 +26,7 @@ module.exports.events.message={ on:true,  run:async(client,message)=>{try{
 // code for event            
          // console.log('message dsfs'); 
           if(message.author.id===client.user.id) return;
+          if(message.author.bot) return;
           let file=require('./bad_words_source.js');
           let bad_words=file.bad_words;
           let find = false;
@@ -34,7 +35,7 @@ module.exports.events.message={ on:true,  run:async(client,message)=>{try{
           for(let i=0;i<bad_words.length;i++){
                  //if(message.content.indexOf(bad_words[i])!=-1){message.reply('detected');break;};
                  message.content=" "+message.content+" ";
-                 if(message.content.toLowerCase().indexOf(" "+bad_words[i]+" ")!=-1){
+                 if(message.content.toLowerCase().indexOf(bad_words[i])!=-1){
                     let w = bad_words[i];
                     message.content=message.content.replace(w,'**'+bad_words[i]+'**');
                     find=true;

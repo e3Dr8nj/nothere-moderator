@@ -71,9 +71,10 @@ module.exports.commands.muteHelp={ on:true, aliase:'мутхелп', run:async(c
               str+='`'+prefix+'размут @ник`-размут \n';
               
               str+='`'+prefix+'мут @ник (1д 10ч 30м)* --причина` -мут/временный* \n';
+              str+='`'+prefix+'мут id> (1д 10ч 30м)* --причина` -мут/временный* \n';
               str+='`'+prefix+'предупреждение @ник --причина` -предупреждение участнику сервера \n';
               str+='`'+prefix+'пс:Команды работают и без упоминаний, но это не точно.`';
-      let str2="\\мутхелп - инфо \n`\\бот-лалка` -самомут на рандомное время (30м-3ч) \n`\\размут @ник` -размут \n`\\мут @ник 30м -- причина`  - временный мут. (1д 10ч 30м) \n`\\предупреждение @ник -- причина` -предупреждение участнику сервера \n```\пс: Команды работают и без указания причины или даже без упоминания ника.```";
+      let str2="\\мутхелп - инфо \n`\\бот-лалка` -самомут на рандомное время (30м-3ч) \n`\\размут @ник` -размут \n`\\мут @ник 30м -- причина`  - временный мут. (1д 10ч 30м)\nИли:\n`\\мут id> 30м -- причина`\n`\\предупреждение @ник -- причина` -предупреждение участнику сервера \n```\пс: Команда мута без упоминания нарушителя - мутит модератора на 2м ```";
               message.channel.send(str2);
               
               return;        
@@ -159,18 +160,23 @@ module.exports.commands.timemute={ on:true, aliase:'мут', run:async(client,me
               if(!!super_moderator_role&&message.member.roles.get(super_moderator_role.id)){allow_mute=true;};
               
               if(!allow_mute) {return message.channel.send('У вас недостаточно прав, лалка');};
-              let mmb = message.mentions.members.first();
-              if(!mmb){
+              let mmb_id=message.content.match(/\d{10,}/);
+             // let mmb = message.mentions.members.first();
+              if(!mmb_id){
                 //message.channel.send('Укажите жертву'); return;
                 let rnd = Math.floor(Math.random()*2);
                  if(rnd==0){message.channel.send('Рандомный объект замучен'); return;};
                  message.channel.send(message.member+' Снимаются роли доступа');
                  await module.exports.insertMmbRoles(client,message,message.member,2*1000*60);
                 message.channel.send(' Накладывается печать немоты 🤐');
+                await module.exports.log(client,message,{name:'Игрался с мутом ',description:message.member.user.username+message.member.user.discriminator +' неправильно использовал команду и был за это замучен на 2 минуты',color:'violet'});
+              
                 await module.exports.delay(2*1000*60);
                        // return module.exports.commands.unmute.run(client,message,mmb,0);
-                      return module.exports.unmute(client,message,message.member.user.id,0);
+                     return module.exports.unmute(client,message,message.member.user.id,0);
+                  return;
               };
+             let mmb = message.guild.members.get(mmb_id[0]); if(!mmb){message.reply('Не найден на сервере');};
               let allow_be_muted=await module.exports.check(client,message,mmb,'acted');//--
              
               //message.reply(!!allow_be_muted);
